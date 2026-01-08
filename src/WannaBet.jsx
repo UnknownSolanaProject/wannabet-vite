@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Connection, PublicKey, clusterApiUrl, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { Program, AnchorProvider, web3 } from '@coral-xyz/anchor';
+import { Program, Provider, web3 } from '@project-serum/anchor';
 import { BN } from 'bn.js';
 import idl from './wannabet-idl.json';
 
@@ -25,7 +25,7 @@ function WannaBet() {
   const getProvider = () => {
     if (!wallet) return null;
     
-    const provider = new AnchorProvider(
+    const provider = new Provider(
       connection,
       wallet,
       { commitment: 'confirmed' }
