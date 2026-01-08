@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Connection, PublicKey, clusterApiUrl, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { Program, AnchorProvider, web3, BN } from '@coral-xyz/anchor';
+import { Program, AnchorProvider, web3 } from '@coral-xyz/anchor';
+import { BN } from 'bn.js';
 import idl from './wannabet-idl.json';
 
 // Your deployed program ID
