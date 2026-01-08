@@ -37,7 +37,8 @@ function WannaBet() {
   const getProgram = () => {
     const provider = getProvider();
     if (!provider) return null;
-    return new Program(idl, PROGRAM_ID, provider);
+    // Cast IDL to proper type for Anchor
+    return new Program(idl, provider);
   };
 
   // Connect Phantom wallet
@@ -80,18 +81,32 @@ function WannaBet() {
 
     try {
       const program = getProgram();
-      const betId = new BN(Date.now()); // Use timestamp as bet ID
-      const endTimeUnix = new BN(Math.floor(new Date(endTime).getTime() / 1000));
-      const amountLamports = new BN(parseFloat(initialAmount) * LAMPORTS_PER_SOL);
+      if (!program) {
+        throw new Error('Program not initialized');
+      }
+
+      // Create BN values with explicit checks
+      const betId = new BN(Date.now().toString());
+      const endTimeDate = new Date(endTime);
+      const endTimeUnix = new BN(Math.floor(endTimeDate.getTime() / 1000).toString());
+      const amountLamports = new BN(Math.floor(parseFloat(initialAmount) * LAMPORTS_PER_SOL).toString());
+
+      console.log('Creating bet with:', {
+        betId: betId.toString(),
+        endTime: endTimeUnix.toString(),
+        amount: amountLamports.toString()
+      });
 
       // Derive bet PDA
-      const [betPda] = await PublicKey.findProgramAddress(
+      const [betPda] = PublicKey.findProgramAddressSync(
         [
           Buffer.from('bet'),
           betId.toArrayLike(Buffer, 'le', 8)
         ],
         program.programId
       );
+
+      console.log('Bet PDA:', betPda.toString());
 
       await program.methods
         .createBet(betId, description, endTimeUnix, amountLamports)
